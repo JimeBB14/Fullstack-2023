@@ -5,8 +5,8 @@ const Persons = ({ persons }) => {
           <div key={person.id}>{person.name} {person.number}</div>
         )}
       </div>
-    )
-  }
+    );
+  };
   
-  export default Persons
+  export default Persons;
   
