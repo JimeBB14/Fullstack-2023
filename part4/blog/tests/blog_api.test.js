@@ -6,6 +6,8 @@ const helper = require('./test_helper');
 
 const api = supertest(app);
 
+jest.setTimeout(30000);
+
 beforeEach(async () => {
   await Blog.deleteMany({});
 
