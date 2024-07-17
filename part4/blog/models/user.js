@@ -1,17 +1,28 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: 3
+  },
   name: String,
-  passwordHash: String,
+  passwordHash: {
+    type: String,
+    required: true,
+    minlength: 3
+  },
   notes: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note',
-    },
+      ref: 'Note'
+    }
   ],
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -19,7 +30,7 @@ userSchema.set('toJSON', {
     delete returnedObject._id;
     delete returnedObject.__v;
     delete returnedObject.passwordHash;
-  },
+  }
 });
 
 const User = mongoose.model('User', userSchema);
