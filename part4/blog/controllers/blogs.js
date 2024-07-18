@@ -17,43 +17,42 @@ const getTokenFrom = request => {
 }
 
 blogsRouter.post('/', async (request, response, next) => {
-  const body = request.body
-  const token = getTokenFrom(request)
-
-  if (!token) {
-    return response.status(401).json({ error: 'token missing' })
-  }
-
-  let decodedToken
-  try {
-    decodedToken = jwt.verify(token, process.env.SECRET)
-  } catch (error) {
-    return response.status(401).json({ error: 'token invalid or expired' })
-  }
-
-  const user = await User.findById(decodedToken.id)
-  if (!user) {
-    return response.status(400).json({ error: 'invalid user' })
-  }
-
-  const blog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes || 0,
-    user: user._id
+    const body = request.body
+    const token = request.token
+  
+    if (!token) {
+      return response.status(401).json({ error: 'token missing' })
+    }
+  
+    let decodedToken
+    try {
+      decodedToken = jwt.verify(token, process.env.SECRET)
+    } catch (error) {
+      return response.status(401).json({ error: 'token invalid or expired' })
+    }
+  
+    const user = await User.findById(decodedToken.id)
+    if (!user) {
+      return response.status(400).json({ error: 'invalid user' })
+    }
+  
+    const blog = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      user: user._id
+    })
+  
+    try {
+      const savedBlog = await blog.save()
+      user.blogs = user.blogs.concat(savedBlog._id)
+      await user.save()
+      response.status(201).json(savedBlog)
+    } catch (exception) {
+      next(exception)
+    }
   })
-
-  try {
-    const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog._id)
-    await user.save()
-    response.status(201).json(savedBlog)
-  } catch (exception) {
-    next(exception)
-  }
-})
-
 blogsRouter.put('/:id', async (req, res) => {
   const body = req.body
   const blog = {
