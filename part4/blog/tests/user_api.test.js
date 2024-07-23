@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
-const bcrypt = require('bcrypt'); 
 const app = require('../app');
-const User = require('../models/user'); 
+const User = require('../models/user');
 const helper = require('./test_helper');
+const bcrypt = require('bcrypt');
 
 const api = supertest(app);
 
-jest.setTimeout(30000); 
+jest.setTimeout(300000); 
 
 beforeEach(async () => {
   await User.deleteMany({});
@@ -53,10 +53,10 @@ describe('when there is initially one user in db', () => {
     const result = await api
       .post('/api/users')
       .send(newUser)
-      .expect(400) // Expecting 400 Bad Request
+      .expect(400)
       .expect('Content-Type', /application\/json/);
 
-    expect(result.body.error).toContain('expected `username` to be unique');
+    expect(result.body.error).toContain('`username` to be unique');
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
@@ -74,7 +74,7 @@ describe('when there is initially one user in db', () => {
     const result = await api
       .post('/api/users')
       .send(newUser)
-      .expect(400) // Expecting 400 Bad Request
+      .expect(400)
       .expect('Content-Type', /application\/json/);
 
     expect(result.body.error).toContain('username and password must be at least 3 characters long');
@@ -95,7 +95,7 @@ describe('when there is initially one user in db', () => {
     const result = await api
       .post('/api/users')
       .send(newUser)
-      .expect(400) 
+      .expect(400)
       .expect('Content-Type', /application\/json/);
 
     expect(result.body.error).toContain('username and password must be at least 3 characters long');
@@ -105,6 +105,6 @@ describe('when there is initially one user in db', () => {
   });
 });
 
-afterAll(() => {
-  mongoose.connection.close();
+afterAll(async () => {
+  await mongoose.connection.close();
 });

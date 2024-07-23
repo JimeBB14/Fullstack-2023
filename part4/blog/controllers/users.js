@@ -9,29 +9,32 @@ usersRouter.get('/', async (req, res) => {
   })
   
 
-usersRouter.post('/', async (request, response) => {
-  const { username, name, password } = request.body;
-
-  if (!username || !password) {
-    return response.status(400).json({ error: 'username and password are required' });
-  }
-
-  if (username.length < 3 || password.length < 3) {
-    return response.status(400).json({ error: 'username and password must be at least 3 characters long' });
-  }
-
-  const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
-
-  const user = new User({
-    username,
-    name,
-    passwordHash,
+  usersRouter.post('/', async (request, response, next) => {
+    try {
+      const { username, name, password } = request.body;
+  
+      if (!username || username.length < 3 || !password || password.length < 3) {
+        return response.status(400).json({ error: 'username and password must be at least 3 characters long' });
+      }
+  
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+  
+      const user = new User({
+        username,
+        name,
+        passwordHash,
+      });
+  
+      const savedUser = await user.save();
+      response.status(201).json(savedUser);
+    } catch (error) {
+      if (error.name === 'MongoServerError' && error.code === 11000) {
+        return response.status(400).json({ error: 'expected `username` to be unique' });
+      }
+      next(error);
+    }
   });
-
-  const savedUser = await user.save();
-
-  response.status(201).json(savedUser);
-});
+  
 
 module.exports = usersRouter;
