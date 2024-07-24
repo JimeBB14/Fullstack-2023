@@ -17,7 +17,10 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then(initialBlogs => setBlogs(initialBlogs));
+    blogService.getAll().then(initialBlogs => {
+      const sortedBlogs = initialBlogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
+    });
   }, []);
 
   useEffect(() => {
@@ -56,7 +59,9 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog));
+      const newBlogs = blogs.concat(returnedBlog);
+      const sortedBlogs = newBlogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
       setNotification({ message: `A new blog ${returnedBlog.title} by ${returnedBlog.author} added`, type: 'success' });
       setTimeout(() => setNotification({ message: null, type: '' }), 5000);
     }).catch(exception => {
@@ -88,7 +93,7 @@ const App = () => {
           <div>
             <h2>blogs</h2>
             {blogs.map(blog => (
-              <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} />
+              <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
             ))}
           </div>
         </div>

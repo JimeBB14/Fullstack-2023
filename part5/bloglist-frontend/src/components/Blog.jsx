@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import blogService from '../services/blogs';
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const [visible, setVisible] = useState(false);
 
   const blogStyle = {
@@ -20,14 +20,30 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
-      user: blog.user ? blog.user.id || blog.user : null, 
+      user: blog.user ? blog.user.id || blog.user : null,
     };
 
     try {
       const returnedBlog = await blogService.update(blog.id, updatedBlog);
-      setBlogs(blogs.map(b => (b.id !== blog.id ? b : returnedBlog)));
+      returnedBlog.user = blog.user;
+      const updatedBlogs = blogs.map(b => (b.id !== blog.id ? b : returnedBlog));
+      const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`);
+    if (confirmDelete) {
+      try {
+        await blogService.remove(blog.id);
+        const updatedBlogs = blogs.filter(b => b.id !== blog.id);
+        setBlogs(updatedBlogs);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -43,6 +59,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
             likes {blog.likes} <button onClick={handleLike}>like</button>
           </p>
           <p>{blog.user ? blog.user.name : 'unknown user'}</p>
+          {user && blog.user && blog.user.username === user.username && (
+            <button onClick={handleDelete}>remove</button>
+          )}
         </div>
       )}
     </div>
