@@ -13,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ message: null, type: '' })
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const blogFormRef = useRef()
 
@@ -44,8 +45,8 @@ const App = () => {
       setNotification({ message: `Welcome ${user.name}`, type: 'success' })
       setTimeout(() => setNotification({ message: null, type: '' }), 5000)
     } catch (exception) {
-      setNotification({ message: 'Wrong username or password', type: 'error' })
-      setTimeout(() => setNotification({ message: null, type: '' }), 5000)
+      setErrorMessage('Wrong username or password')
+      setTimeout(() => setErrorMessage(null), 5000)
     }
   }
 
@@ -82,6 +83,7 @@ const App = () => {
             handleUsernameChange={({ target }) => setUsername(target.value)}
             handlePasswordChange={({ target }) => setPassword(target.value)}
             handleSubmit={handleLogin}
+            errorMessage={errorMessage}
           />
         </Togglable>
       ) : (

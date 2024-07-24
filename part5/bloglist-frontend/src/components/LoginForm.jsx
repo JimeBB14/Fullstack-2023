@@ -6,16 +6,24 @@ const LoginForm = ({
   handleUsernameChange,
   handlePasswordChange,
   username,
-  password
+  password,
+  errorMessage,
 }) => {
   return (
     <div>
       <h2>Login</h2>
+      {errorMessage && (
+        <div className="error" style={{ color: 'red', border: 'solid' }}>
+          {errorMessage}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <div>
           username
           <input
+            type="text"
             value={username}
+            name="username"
             onChange={handleUsernameChange}
           />
         </div>
@@ -24,6 +32,7 @@ const LoginForm = ({
           <input
             type="password"
             value={password}
+            name="password"
             onChange={handlePasswordChange}
           />
         </div>
@@ -38,7 +47,8 @@ LoginForm.propTypes = {
   handleUsernameChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
+  password: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string,
 }
 
 export default LoginForm
