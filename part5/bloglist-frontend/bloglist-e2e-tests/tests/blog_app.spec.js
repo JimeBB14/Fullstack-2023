@@ -143,6 +143,44 @@ describe('Blog app', () => {
         await expect(page.locator('text=Test Blog Test Author')).toBeHidden({ timeout: 10000 });
       });
       
-      
+test('blogs are arranged in order according to the likes', async ({ page }) => {
+
+  await page.click('text=new blog');
+  await page.fill('input[id="title"]', 'First Blog');
+  await page.fill('input[id="author"]', 'First Author');
+  await page.fill('input[id="url"]', 'http://firstblog.com');
+  await page.click('button[type="submit"]');
+  await page.waitForSelector('text=A new blog First Blog by First Author added');
+  
+  await page.waitForTimeout(9000);
+  
+  await page.click('text=new blog');
+  await page.fill('input[id="title"]', 'Second Blog');
+  await page.fill('input[id="author"]', 'Second Author');
+  await page.fill('input[id="url"]', 'http://secondblog.com');
+  await page.click('button[type="submit"]');
+  await page.waitForSelector('text=A new blog Second Blog by Second Author added');
+
+ 
+  await page.locator('text=First Blog First Author').locator('..').locator('button', { hasText: 'view' }).click();
+  await page.click('button', { hasText: 'like' });
+  await page.click('button', { hasText: 'like' });
+
+  
+  
+  await page.locator('text=Second Blog First Author').locator('..').locator('button', { hasText: 'view' }).click();
+  await page.click('button', { hasText: 'like' });
+  await page.click('button', { hasText: 'like' });
+  await page.click('button', { hasText: 'like' });
+
+  
+  const blogs = await page.locator('.blog');
+  const firstBlog = await blogs.nth(0).textContent();
+  const secondBlog = await blogs.nth(1).textContent();
+
+  expect(firstBlog).toContain('Second Blog Second Author');
+  expect(secondBlog).toContain('First Blog First Author');
+});
+
   });
 });
