@@ -20,7 +20,7 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
-      user: blog.user ? blog.user.id || blog.user : null, // Ensure the user ID is maintained
+      user: blog.user ? blog.user.id || blog.user : null, 
     };
 
     try {
