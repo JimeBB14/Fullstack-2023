@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
   const [visible, setVisible] = useState(false)
@@ -38,6 +39,9 @@ const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
       }
     }
   }
+
+  console.log('Current user:', user)
+  console.log('Blog user:', blog.user)
 
   return (
     <div style={blogStyle} className="blog">

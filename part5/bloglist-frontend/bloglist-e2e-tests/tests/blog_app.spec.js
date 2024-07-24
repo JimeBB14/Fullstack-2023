@@ -106,10 +106,43 @@ describe('Blog app', () => {
         await likeButton.click();
       
        
-        // Check that the likes have increased
   const likesField = page.locator('div.blogDetails p:has-text("likes 1")');
   await expect(likesField).toBeVisible({ timeout: 10000 });
       });
+
+      test('a blog can be deleted by the user who added it', async ({ page }) => {
+        await page.click('text=new blog');
+      
+        const titleField = page.locator('input[id="title"]');
+        const authorField = page.locator('input[id="author"]');
+        const urlField = page.locator('input[id="url"]');
+        await titleField.fill('Test Blog');
+        await authorField.fill('Test Author');
+        await urlField.fill('http://testurl.com');
+        await page.click('button[type="submit"]');
+      
+        await expect(page.locator('text=Test Blog Test Author')).toBeVisible({ timeout: 10000 });
+      
+
+        await page.reload();
+        await page.click('text=view');
+      
+      
+        const deleteButton = page.locator('button:has-text("remove")');
+        await expect(deleteButton).toBeVisible({ timeout: 10000 });
+      
+       
+        page.on('dialog', async dialog => {
+          await dialog.accept();
+        });
+      
+        
+        await deleteButton.click();
+      
+      
+        await expect(page.locator('text=Test Blog Test Author')).toBeHidden({ timeout: 10000 });
+      });
+      
       
   });
 });
