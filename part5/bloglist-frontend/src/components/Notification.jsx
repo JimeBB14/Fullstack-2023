@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 const Notification = ({ message, type }) => {
   if (message === null) {
-    return null;
+    return null
   }
 
   const notificationStyle = {
@@ -13,13 +13,13 @@ const Notification = ({ message, type }) => {
     borderRadius: '5px',
     padding: '10px',
     marginBottom: '10px',
-  };
+  }
 
   return (
     <div style={notificationStyle}>
       {message}
     </div>
-  );
-};
+  )
+}
 
-export default Notification;
+export default Notification
