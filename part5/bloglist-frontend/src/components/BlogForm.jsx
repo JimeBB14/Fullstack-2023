@@ -1,14 +1,9 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 
 const BlogForm = ({ createBlog }) => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-
-  const handleTitleChange = (event) => setNewTitle(event.target.value)
-  const handleAuthorChange = (event) => setNewAuthor(event.target.value)
-  const handleUrlChange = (event) => setNewUrl(event.target.value)
 
   const addBlog = (event) => {
     event.preventDefault()
@@ -17,6 +12,7 @@ const BlogForm = ({ createBlog }) => {
       author: newAuthor,
       url: newUrl,
     })
+
     setNewTitle('')
     setNewAuthor('')
     setNewUrl('')
@@ -27,40 +23,36 @@ const BlogForm = ({ createBlog }) => {
       <h2>Create a new blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          title:
+          <label htmlFor="title">title:</label>
           <input
+            id="title"
             type="text"
             value={newTitle}
-            onChange={handleTitleChange}
-            id="title"
+            onChange={({ target }) => setNewTitle(target.value)}
           />
         </div>
         <div>
-          author:
+          <label htmlFor="author">author:</label>
           <input
+            id="author"
             type="text"
             value={newAuthor}
-            onChange={handleAuthorChange}
-            id="author"
+            onChange={({ target }) => setNewAuthor(target.value)}
           />
         </div>
         <div>
-          url:
+          <label htmlFor="url">url:</label>
           <input
+            id="url"
             type="text"
             value={newUrl}
-            onChange={handleUrlChange}
-            id="url"
+            onChange={({ target }) => setNewUrl(target.value)}
           />
         </div>
         <button type="submit">create</button>
       </form>
     </div>
   )
-}
-
-BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

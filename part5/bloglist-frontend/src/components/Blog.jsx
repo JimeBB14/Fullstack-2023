@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, blogs, setBlogs, user, onLike }) => {
   const [visible, setVisible] = useState(false)
 
   const blogStyle = {
@@ -17,22 +16,14 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     setVisible(!visible)
   }
 
-  const handleLike = async () => {
+  const handleLike = () => {
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1,
-      user: blog.user ? blog.user.id || blog.user : null,
     }
 
-    try {
-      const returnedBlog = await blogService.update(blog.id, updatedBlog)
-      returnedBlog.user = blog.user
-      const updatedBlogs = blogs.map(b => (b.id !== blog.id ? b : returnedBlog))
-      const sortedBlogs = updatedBlogs.sort((a, b) => b.likes - a.likes)
-      setBlogs(sortedBlogs)
-    } catch (error) {
-      console.error(error)
-    }
+    setBlogs(blogs.map(b => (b.id !== blog.id ? b : updatedBlog)))
+    if (onLike) onLike()
   }
 
   const handleDelete = async () => {
@@ -49,12 +40,12 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
       </div>
       {visible && (
-        <div>
+        <div className="blogDetails">
           <p>{blog.url}</p>
           <p>
             likes {blog.likes} <button onClick={handleLike}>like</button>
@@ -74,6 +65,7 @@ Blog.propTypes = {
   blogs: PropTypes.array.isRequired,
   setBlogs: PropTypes.func.isRequired,
   user: PropTypes.object,
+  onLike: PropTypes.func,
 }
 
 export default Blog
