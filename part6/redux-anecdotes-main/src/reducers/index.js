@@ -1,10 +1,16 @@
-import { combineReducers } from 'redux'
-import anecdoteReducer from './anecdoteReducer'
-import filterReducer from './filterReducer'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { store } from './store'
+import App from './App'
 
-const rootReducer = combineReducers({
-  anecdotes: anecdoteReducer,
-  filter: filterReducer
-})
+const queryClient = new QueryClient()
 
-export default rootReducer
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </QueryClientProvider>
+)
